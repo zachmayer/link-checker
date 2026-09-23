@@ -1,0 +1,15 @@
+{
+  "name": "internal-automations",
+  "version": "1.0.0",
+  "description": "Repository for internal github actions workflows for automation and reporting",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "linkinator": "^6.1.2"
+  }
+}

@@ -1,0 +1,15 @@
+| url                                                                                    |   status | state   | parent                                                                  |   failureDetails |
+|:---------------------------------------------------------------------------------------|---------:|:--------|:------------------------------------------------------------------------|-----------------:|
+| http://https:durable.co/ai-website-builder                                             |        0 | BROKEN  | https://www.durable.co/blog/godaddy-alternatives                        |              nan |
+| https://fairdinkumit.durable.co/                                                       |        0 | BROKEN  | https://www.durable.co/blog/ai-website-builder-for-computer-repair      |              nan |
+| https://reddirectpcs.durable.co/                                                       |        0 | BROKEN  | https://www.durable.co/blog/ai-website-builder-for-cleaning-companies   |              nan |
+| https://queencleaning.durable.co/                                                      |        0 | BROKEN  | https://www.durable.co/blog/ai-website-builder-for-cleaning-companies   |              nan |
+| https://alliancedetailing.durable.co/                                                  |        0 | BROKEN  | https://www.durable.co/blog/ai-website-builder-for-car-detailing        |              nan |
+| https://inboxtosocial.durable.co/                                                      |        0 | BROKEN  | https://www.durable.co/blog/ai-website-builder-for-writers              |              nan |
+| https://admiskovic.durable.co/                                                         |        0 | BROKEN  | https://www.durable.co/blog/ai-website-builder-for-car-detailing        |              nan |
+| https://decoussama.durable.co/                                                         |        0 | BROKEN  | https://www.durable.co/blog/ai-website-builder-for-interior-designers   |              nan |
+| https://ltbdesigns.durable.co/                                                         |        0 | BROKEN  | https://www.durable.co/blog/ai-website-builder-for-interior-designers   |              nan |
+| https://virtuousbookkeeping.durable.co/                                                |        0 | BROKEN  | https://www.durable.co/blog/ai-website-builder-for-bookkeepers          |              nan |
+| https://lafridamichoacana.durable.co/                                                  |        0 | BROKEN  | https://www.durable.co/blog/one-million-ai-websites                     |              nan |
+| https://help.durable.co/en-US/index-your-website-in-google-search-console-(seo)-285914 |      404 | BROKEN  | https://www.durable.co/blog/how-to-get-your-business-on-page-one-google |              nan |
+| https://mento.durable.co/                                                              |        0 | BROKEN  | https://www.durable.co/blog/ai-website-builder-for-video-production     |              nan |

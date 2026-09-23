@@ -1,0 +1,49 @@
+name: Daily Link Check
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # Runs at 8 AM Eastern Time (12 PM UTC)
+  workflow_dispatch:
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          npm install
+          pip install poetry
+          poetry install
+
+      - name: Run Link Checker
+        run: |
+          make run-link-check
+          make filter-links
+          make aggregate-links
+          make generate-reports
+
+      - name: Upload Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: Reports
+          path: reports/
+
+      - name: Display Filtered Links Report
+        run: |
+          cat reports/filtered_links.md
+
+      - name: Display Aggregated Links Report
+        run: |
+          cat reports/aggregated_links.md
