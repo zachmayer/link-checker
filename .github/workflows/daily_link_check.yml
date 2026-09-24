@@ -1,8 +1,6 @@
 name: Daily Link Check
 
 on:
-  schedule:
-    - cron: '0 12 * * *'  # Runs at 8 AM Eastern Time (12 PM UTC)
   workflow_dispatch:
 
 jobs:
