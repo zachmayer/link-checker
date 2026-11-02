@@ -2,7 +2,7 @@
 name = "internal-automations"
 version = "0.1.0"
 description = "Internal GitHub actions workflows for automation and reporting"
-authors = ["Zach Deane-Mayer <zach@durable.co>"]
+authors = ["Zach Deane-Mayer <zach.mayer@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
