@@ -14,7 +14,9 @@ def main(input_file: str, output_file: str) -> None:
         output_file: Path to save the aggregated CSV file.
     """
     df: pd.DataFrame = pd.read_csv(input_file)
-    aggregated: pd.DataFrame = df.groupby("parent").size().reset_index()
+    aggregated: pd.DataFrame = (
+        df.groupby("parent").size().reset_index(name="broken_link_count")
+    )
     aggregated = aggregated.sort_values(by="broken_link_count", ascending=False)
     aggregated.to_csv(output_file, index=False)
     click.echo(f"Aggregated links saved to {output_file}")

@@ -6,14 +6,14 @@ TIMEOUT ?= 1000
 .PHONY: help
 help:
 	@echo "Available targets:"
-	@echo "  install            - Install the project environment"
-	@echo "  clean              - Clean up the project environment"
-	@echo "  lint               - Run linting and type checking"
-	@echo "  format             - Auto-format the codebase"
-	@echo "  run-link-check     - Run link checker and generate links.csv"
-	@echo "  filter-links       - Filter out specific status codes from links.csv"
-	@echo "  aggregate-links    - Aggregate broken links by parent page"
-	@echo "  generate-reports   - Format CSV files for GitHub Actions display"
+	@echo "  install              - Install the project environment"
+	@echo "  clean                - Clean up the project environment"
+	@echo "  lint                 - Run linting and type checking"
+	@echo "  format               - Auto-format the codebase"
+	@echo "  links.csv            - Run link checker on SITE_URL and generate links.csv"
+	@echo "  filtered_links.csv   - Filter out specific status codes from links.csv"
+	@echo "  aggregated_links.csv - Aggregate broken links by parent page"
+	@echo "  generate-reports     - Format CSV files for GitHub Actions display"
 	@echo ""
 	@echo "Usage:"
 	@echo "  make [target]"
@@ -25,49 +25,57 @@ help:
 #### Main commands ####
 .PHONY: install
 install:
-	poetry install
+	uv sync
 	npm install
 
 .PHONY: clean
 clean:
-	rm -rf node_modules __pycache__ .pytest_cache .mypy_cache .ruff_cache
-	rm -f poetry.lock package-lock.json links.csv filtered_links.csv aggregated_links.csv
+	rm -rf node_modules .venv __pycache__ .pytest_cache .ruff_cache
+	rm -f links.csv filtered_links.csv aggregated_links.csv
 	find . -name ".DS_Store" -type f -delete
 
 .PHONY: lint
 lint:
-	poetry run ruff check scripts/
-	poetry run mypy scripts/
+	uv run ruff check .
+	uv run ruff format --check .
+	uv run ty check
 
 .PHONY: format
 format:
-	poetry run isort scripts/
-	poetry run ruff check --fix scripts/
-	poetry run black scripts/
+	uv run ruff check --fix .
+	uv run ruff format .
 
+# linkinator exits 1 both when it finds broken links, which is what this report
+# is for, and when it fails outright (a SITE_URL path that matches nothing).
+# With --verbosity=error every CSV row is a broken link, so a failed run is a
+# CSV without linkinator's header, or a non-zero exit with no rows.
 links.csv:
 	@if [ -z "$(SITE_URL)" ]; then \
 		echo "Error: SITE_URL is not set. Please provide a value for SITE_URL."; \
 		exit 1; \
 	fi
-	@if ! npx linkinator "$(SITE_URL)" --recurse \
+	@status=0; \
+	npx linkinator "$(SITE_URL)" --recurse \
 		--skip "'^(?!.*?$(shell echo "$(SITE_URL)" | sed -E 's#^https?://([^/]+).*#\1#')).*$$'" \
-		--timeout=$(TIMEOUT) --verbosity=error --format=csv > $@; then \
+		--timeout=$(TIMEOUT) --verbosity=error --format=csv > $@ || status=$$?; \
+	if ! head -n 1 $@ | grep -q '^url,status,state,parent' || \
+		{ [ $$status -ne 0 ] && ! tail -n +2 $@ | grep -q .; }; then \
 		echo "Error: Linkinator command failed. Please check the SITE_URL."; \
+		rm -f $@; \
 		exit 1; \
 	fi
 
 filtered_links.csv: links.csv
-	poetry run scripts.filter_links.py $< $@
+	uv run python scripts/filter_links.py $< $@
 
 aggregated_links.csv: filtered_links.csv
-	poetry run scripts.aggregate_links.py $< $@
+	uv run python scripts/aggregate_links.py $< $@
 
 reports/filtered_links.md: filtered_links.csv
-	poetry run scripts.format_for_github.py $< $@
+	uv run python scripts/format_for_github.py $< $@
 
 reports/aggregated_links.md: aggregated_links.csv
-	poetry run scripts.format_for_github.py $< $@
+	uv run python scripts/format_for_github.py $< $@
 
 .PHONY: generate-reports
 generate-reports:

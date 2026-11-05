@@ -12,8 +12,8 @@ __pycache__/
 # macOS files
 .DS_Store
 
-# Poetry lock file (we are including it in git, so don't ignore it)
-# poetry.lock
+# uv lock file (we are including it in git, so don't ignore it)
+# uv.lock
 
 # npm lock file (we are including it in git, so don't ignore it)
 # package-lock.json
