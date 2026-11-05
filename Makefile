@@ -45,15 +45,23 @@ format:
 	uv run ruff check --fix .
 	uv run ruff format .
 
+# linkinator exits 1 both when it finds broken links, which is what this report
+# is for, and when it fails outright (a SITE_URL path that matches nothing).
+# With --verbosity=error every CSV row is a broken link, so a failed run is a
+# CSV without linkinator's header, or a non-zero exit with no rows.
 links.csv:
 	@if [ -z "$(SITE_URL)" ]; then \
 		echo "Error: SITE_URL is not set. Please provide a value for SITE_URL."; \
 		exit 1; \
 	fi
-	@if ! npx linkinator "$(SITE_URL)" --recurse \
+	@status=0; \
+	npx linkinator "$(SITE_URL)" --recurse \
 		--skip "'^(?!.*?$(shell echo "$(SITE_URL)" | sed -E 's#^https?://([^/]+).*#\1#')).*$$'" \
-		--timeout=$(TIMEOUT) --verbosity=error --format=csv > $@; then \
+		--timeout=$(TIMEOUT) --verbosity=error --format=csv > $@ || status=$$?; \
+	if ! head -n 1 $@ | grep -q '^url,status,state,parent' || \
+		{ [ $$status -ne 0 ] && ! tail -n +2 $@ | grep -q .; }; then \
 		echo "Error: Linkinator command failed. Please check the SITE_URL."; \
+		rm -f $@; \
 		exit 1; \
 	fi
 
