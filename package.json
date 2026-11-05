@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "linkinator": "^6.1.2"
+    "linkinator": "^8.1.0"
+  },
+  "overrides": {
+    "glob": "^14.0.2"
   }
 }
