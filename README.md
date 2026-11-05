@@ -4,23 +4,23 @@
 
 - **macOS**
 - **Homebrew** installed
-- **Poetry** installed (`brew install poetry`)
+- **uv** installed (`brew install uv`)
 - **Node.js** and **npm** installed (`brew install node`)
 
 ## Setup Instructions
 
-0. **Install Poetry and Node.js** (only need to do this once)
+0. **Install uv and Node.js** (only need to do this once)
 
    ```zsh
-   brew install poetry
+   brew install uv
    brew install node
    ```
 
 1. **Clone the Repository**
 
     ```zsh
-    git clone https://github.com/TeamDurable/internal-automations
-    cd internal-automations
+    git clone https://github.com/zachmayer/link-checker
+    cd link-checker
     ```
 
 2. **Install Dependencies**
@@ -32,7 +32,7 @@
 3. **Run the Link Checker**
 
    ```zsh
-   make run-link-check
+   make generate-reports SITE_URL=https://www.example.com
    ```
 
 ## Available Make Commands
@@ -42,8 +42,7 @@
 - `make clean`: Remove generated files and clean the environment.
 - `make lint`: Run linters and type checkers.
 - `make format`: Auto-format the codebase.
-- `make run-link-check`: Run the link checker and generate links.csv.
-- `make filter-links`: Filter out specific status codes from links.csv.
-- `make aggregate-links`: Aggregate broken links by parent page.
+- `make links.csv SITE_URL=...`: Run the link checker and generate links.csv.
+- `make filtered_links.csv`: Filter out specific status codes from links.csv.
+- `make aggregated_links.csv`: Aggregate broken links by parent page.
 - `make generate-reports`: Generate Markdown reports for GitHub Actions.
-- `make poetry-shell`: Open an interactive Poetry shell.

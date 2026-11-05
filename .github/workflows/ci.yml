@@ -1,8 +1,8 @@
 name: ci
 
 # One check job: zizmor finds no workflow security flaws, both lockfiles still
-# install, linkinator still finds a broken link, and the Python scripts still
-# read its CSV. Dependabot's PRs merge once it passes.
+# install, linkinator still finds a broken link, the Python scripts still read
+# its CSV, and ruff and ty pass. Dependabot's PRs merge once it passes.
 on:
   push:
     branches: [main]
@@ -49,17 +49,19 @@ jobs:
           cat smoke/links.csv
           grep -q '^smoke/missing.html,404,BROKEN,smoke/broken.html' smoke/links.csv
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
-      # The scripts are a Poetry project, run here through uvx. Python 3.13:
-      # the locked pandas 2.2.3 ships no 3.14 wheels.
-      - name: poetry.lock installs and the scripts read linkinator's CSV
-        env:
-          POETRY_VIRTUALENVS_USE_POETRY_PYTHON: "true"
+      # uv installs the Python that .python-version names.
+      - run: uv sync --locked
+      # The same chain as the Makefile; the aggregate must count the one
+      # broken link against the page that holds it.
+      - name: the scripts read linkinator's CSV
         run: |
-          uvx --python 3.13 poetry@2.5.1 check --lock
-          uvx --python 3.13 poetry@2.5.1 install --no-root
-          uvx --python 3.13 poetry@2.5.1 run python scripts/filter_links.py smoke/links.csv smoke/filtered_links.csv
-          uvx --python 3.13 poetry@2.5.1 run python scripts/format_for_github.py smoke/filtered_links.csv smoke/filtered_links.md
-          cat smoke/filtered_links.md
+          uv run python scripts/filter_links.py smoke/links.csv smoke/filtered_links.csv
+          uv run python scripts/aggregate_links.py smoke/filtered_links.csv smoke/aggregated_links.csv
+          uv run python scripts/format_for_github.py smoke/filtered_links.csv smoke/filtered_links.md
+          uv run python scripts/format_for_github.py smoke/aggregated_links.csv smoke/aggregated_links.md
+          cat smoke/filtered_links.md smoke/aggregated_links.md
+          grep -qx 'smoke/broken.html,1' smoke/aggregated_links.csv
+      - run: make lint
 
   # Dependabot's PRs merge themselves. This job checks nothing out, so the PR's
   # code never runs with this write token, and --match-head-commit refuses a

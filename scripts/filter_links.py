@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import click
 import pandas as pd
 
@@ -15,7 +13,7 @@ import pandas as pd
     default=(403, 405),
     help="Status codes to exclude. Can be used multiple times.",
 )
-def main(input_file: str, output_file: str, exclude: Tuple[int, ...]) -> None:
+def main(input_file: str, output_file: str, exclude: tuple[int, ...]) -> None:
     """
     Filter links from INPUT_FILE and save the result to OUTPUT_FILE.
 
