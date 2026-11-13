@@ -62,6 +62,15 @@ jobs:
           cat smoke/filtered_links.md smoke/aggregated_links.md
           grep -qx 'smoke/broken.html,1' smoke/aggregated_links.csv
       - run: make lint
+      # Dependabot's merge waits on this job, so on its PRs this job verifies the
+      # lockfile too: the Verify lockfile workflow is not a required check. Only on
+      # its PRs, so a bad release of the unpinned extension (that workflow says why)
+      # can't turn every other run red.
+      - name: Verify actions.lock
+        if: github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh extension install github/gh-actions-lock && gh actions-lock --verify
 
   # Dependabot's PRs merge themselves. This job checks nothing out, so the PR's
   # code never runs with this write token, and --match-head-commit refuses a
